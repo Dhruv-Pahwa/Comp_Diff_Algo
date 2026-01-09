@@ -1,7 +1,4 @@
-/*************************************************
- * OPGW AGC Cryptography Benchmark (Unified Metrics)
- *************************************************/
-
+//Main file for benchmarking cryptographic operations
 const agcData = require("./agcData");
 const crypto = require("crypto");
 const process = require("process");
@@ -9,9 +6,6 @@ const { performance } = require("perf_hooks");
 
 const ITERATIONS = 100;
 
-/* ------------------------------------------------
-   Prepare AGC telemetry payload (NO scaling)
------------------------------------------------- */
 const payload = Buffer.from(JSON.stringify(agcData));
 const payloadKB = (payload.length / 1024).toFixed(2);
 
@@ -23,10 +17,6 @@ function measureCPUAndMemory(fn) {
   const memMB = (process.memoryUsage().rss / 1024 / 1024).toFixed(2);
   return { cpuMs, memMB };
 }
-
-/* ------------------------------------------------
-   ASYMMETRIC ALGORITHMS
------------------------------------------------- */
 
 function rsa2048Benchmark() {
   const sessionKey = crypto.randomBytes(32);
@@ -92,10 +82,6 @@ function x25519Benchmark() {
   return { keyGen, encTime: exch, decTime: "N/A", ...cpuMem, sessionKey: Buffer.alloc(32) };
 }
 
-/* ------------------------------------------------
-   SYMMETRIC ALGORITHMS
------------------------------------------------- */
-
 function aes256gcmBenchmark(key) {
   let enc = 0, dec = 0;
 
@@ -113,7 +99,7 @@ function aes256gcmBenchmark(key) {
     d.update(encrypted);
     d.final();
 
-    enc += 0; // counted by wall clock
+    enc += 0;
     dec += 0;
   }
 
@@ -161,10 +147,6 @@ function chacha20Benchmark(key) {
   };
 }
 
-/* ------------------------------------------------
-   PRINT RESULTS (UNIFIED FORMAT)
------------------------------------------------- */
-
 function printResult(name, r) {
   console.log(`
 ========================================
@@ -180,10 +162,6 @@ Memory Usage    : ${r.memMB} MB
 ========================================
 `);
 }
-
-/* ------------------------------------------------
-   EXECUTION
------------------------------------------------- */
 
 console.log("\nOPGW AGC CRYPTOGRAPHY BENCHMARK\n");
 
